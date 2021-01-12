@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="en">
+  <head>
+  {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.3/css/all.css" integrity="sha384-UHRtZLI+pbxtHCWp1t77Bi1L4ZtiqrqD80Kn4Z8NTSRyMA2Fd33n5dQ8lWUE00s/" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+  </head>
+  <body>
+     <header>
+        <div class="container">
+            <h1>
+               <a href="{% url 'portal:home' %}">
+                    <img class="img-fluid" src="{% static 'img/logo.png' %}" alt="head-logo">
+                </a>
+            </h1>
+            <p class="head">Government of Maharashtra</p>
+            {% if request.user.is_authenticated %}
+              <div class="name-log">
+                <p class="user-name">MR. {{ request.user }}</p>
+                <a href="{% url 'logout' %}">Logout</a>
+              </div>
+            {% endif %}
+        </div>
+    </header>
+      {% block content %}
+        <div class="outer">
+          <h3 class="selection">All Payments</h3>
+          <ul class="nav nav-pills mb-3" id="pills-tab" role="tablist">
+
+            {% comment %} Pending {% endcomment %}
+            <li class="nav-item ">
+              <a class="nav-link active" id="pills-pending-tab" data-toggle="pill" href="#pills-pending" role="tab" aria-controls="pills-pending" aria-selected="false">Pending</a>
+            </li>
+
+            {% comment %} Matched {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link " id="pills-matched-tab" data-toggle="pill" href="#pills-matched" role="tab" aria-controls="pills-matched" aria-selected="true">Matched</a>
+            </li>
+
+            {% comment %} Unmatched {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link" id="pills-unmatched-tab" data-toggle="pill" href="#pills-unmatched" role="tab" aria-controls="pills-unmatched" aria-selected="false">Unmatched</a>
+            </li>
+
+            {% comment %} Work Order {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link" id="pills-phase-tab" data-toggle="pill" href="#pills-phase" role="tab" aria-controls="pills-phase" aria-selected="false">Work Order</a>
+            </li>
+          </ul>
+          <div class="tab-content" id="pills-tabContent">
+
+            {% comment %} Matched {% endcomment %}
+            <div class="tab-pane fade  " id="pills-matched" role="tabpanel" aria-labelledby="pills-matched-tab">
+              <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
+                <thead>
+                  <tr>
+                    <th scope="col">District</th>
+                      <th scope="col">Taluka</th>
+                      <th scope="col">Grampanchayat</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Mobile</th>
+                      <th scope="col">Designation</th>
+                      <th scope="col">UTR/PaymentID</th>
+                      <th scope="col">Phase</th>
+                      <th scope="col">Remark</th>
+                      <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for matched_pay in approved_payments_matched %}
+                  {% for gp_user in all_gp_users %}
+                    {% for utr_or_id in all_utr_or_id %}
+                     {% for phase_for_paid_user in phase_for_paid_users %}
+                      {% if gp_user.user_id == matched_pay.gp_user.user_id and matched_pay.gp_user.user_id == utr_or_id.user_id and matched_pay.gp_user.user_id == phase_for_paid_user.user_id %}
+                        <tr>
+                          <td>{{ gp_user.district }}</td>
+                          <td>{{ gp_user.taluka }}</td>
+                          <td>{{ gp_user.panchayat }}</td>
+                          <td>{{ gp_user.first_name }} {{ gp_user.last_name }}</td>
+                          <td>{{ gp_user.phone_number }}</td>
+                          <td>{{ gp_user.designation }}</td>
+                          <td>{% if utr_or_id.paymentID == '0' %}
+                                {{ utr_or_id.UTR_no }}
+                              {% else %}
+                                {{ utr_or_id.paymentID }}
+                              {% endif %}
+                          </td>
+                          <td>{{ phase_for_paid_user.phaseNO }}</td>
+                          <td>{{ matched_pay.remark }}</td>
+                          <td>Verified by accountant</td>
+                        </tr>
+                      {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% comment %} Work Order {% endcomment %}
+            <div class="tab-pane fade" id="pills-phase" role="tabpanel" aria-labelledby="pills-phase-tab">
+           
+              <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
+               
+                <thead>
+               
+                  <tr>
+                    <th scope="col">District</th>
+                    <th scope="col">Taluka</th>
+                    <th scope="col">Grampanchayat</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">UTR/PaymentID</th>
+                    <th scope="col">Director Approvel</th>
+                    <th scope="col">Remark</th>
+                    <th scope="col">Special Approvel</th>
+                  </tr>
+                </thead>
+                <tbody>
+               <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModal">Work Order is Ready</button>
+                {% for unmatched_and_exlude in approved_payments_matched %}
+                  {% for gp_user in all_gp_users %}
+                    {% for utr_or_id in all_utr_or_id %}
+                     {% for phase_for_paid_user in phase_for_paid_users %}
+                      {% if gp_user.user_id == unmatched_and_exlude.gp_user.user_id and unmatched_and_exlude.gp_user.user_id == utr_or_id.user_id and unmatched_and_exlude.gp_user.user_id == phase_for_paid_user.user_id %}
+                        <tr>
+                          <td>{{ gp_user.district }}</td>
+                          <td>{{ gp_user.taluka }}</td>
+                          <td>{{ gp_user.panchayat }}</td>
+                          <td>{{ gp_user.first_name }} {{ gp_user.last_name }}</td>
+                          <td>{{ gp_user.phone_number }}</td>
+                          <td>{{ gp_user.designation }}</td>
+                          <td>{% if utr_or_id.paymentID == '0' %}
+                                {{ utr_or_id.UTR_no }}
+                              {% else %}
+                                {{ utr_or_id.paymentID }}
+                              {% endif %}
+                          </td>
+                          <td>Approved by Director</td>
+                          <td>{{ unmatched_and_exlude.remark }}</td>
+                          <td><a href="{% static '/img/pr.pdf' %}" class="btn btn-primary">Approve</a></td>
+                        </tr>
+                      {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% comment %} Pending {% endcomment %}
+            <div class="tab-pane fade show active" id="pills-pending" role="tabpanel" aria-labelledby="pills-pending-tab">
+              <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
+                <thead>
+                  <tr>
+                    <th scope="col">District</th>
+                      <th scope="col">Taluka</th>
+                      <th scope="col">Grampanchayat</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Mobile</th>
+                      <th scope="col">Designation</th>
+                      <th scope="col">UTR/PaymentID</th>
+                      <th scope="col">Phase</th>
+                      <th scope="col">Remark</th>
+                      <th scope="col">Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                {% for unmatched_pay in filtered_approved_payments %}
+                  {% for gp_user in all_gp_users %}
+                    {% for utr_or_id in all_utr_or_id %}
+                     {% for phase_for_paid_user in phase_for_paid_users %}
+                      {% if gp_user.user_id == unmatched_pay.gp_user.user_id and unmatched_pay.gp_user.user_id == utr_or_id.user_id and unmatched_pay.gp_user.user_id == phase_for_paid_user.user_id %}
+                        <tr>
+                          <td>{{ gp_user.district }}</td>
+                          <td>{{ gp_user.taluka }}</td>
+                          <td>{{ gp_user.panchayat }}</td>
+                          <td>{{ gp_user.first_name }} {{ gp_user.last_name }}</td>
+                          <td>{{ gp_user.phone_number }}</td>
+                          <td>{{ gp_user.designation }}</td>
+                          <td>{% if utr_or_id.paymentID == '0' %}
+                                {{ utr_or_id.UTR_no }}
+                              {% else %}
+                                {{ utr_or_id.paymentID }}
+                              {% endif %}
+                          </td>
+                          <td>{{ phase_for_paid_user.phaseNO }}</td>
+                          <td>{{ unmatched_pay.remark }}</td>
+                            <td><a href="{% url 'portal:action' unmatched_pay.gp_user.user_id %}">action</a></td>
+                        </tr>
+                      {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+
+            {% comment %} Unmatched {% endcomment %}
+            <div class="tab-pane fade" id="pills-unmatched" role="tabpanel" aria-labelledby="pills-unmatched-tab">
+              <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
+                <thead>
+                  <tr>
+                    <th scope="col">District</th>
+                    <th scope="col">Taluka</th>
+                    <th scope="col">Grampanchayat</th>
+                    <th scope="col">Name</th>
+                    <th scope="col">Mobile</th>
+                    <th scope="col">Designation</th>
+                    <th scope="col">UTR/PaymentID</th>
+                    <th scope="col">Phase</th>
+                    <th scope="col">Remark</th>
+                  </tr>
+                </thead>
+                <tbody>
+                
+                {% for unmatched_and_exlude in get_unmatched_and_exlude_paid %}
+                  {% for gp_user in all_gp_users %}
+                    {% for utr_or_id in all_utr_or_id %}
+                     {% for phase_for_paid_user in phase_for_paid_users %}
+                      {% if gp_user.user_id == unmatched_and_exlude.gp_user.user_id and unmatched_and_exlude.gp_user.user_id == utr_or_id.user_id and unmatched_and_exlude.gp_user.user_id == phase_for_paid_user.user_id %}
+                        <tr>
+                          <td>{{ gp_user.district }}</td>
+                          <td>{{ gp_user.taluka }}</td>
+                          <td>{{ gp_user.panchayat }}</td>
+                          <td>{{ gp_user.first_name }} {{ gp_user.last_name }}</td>
+                          <td>{{ gp_user.phone_number }}</td>
+                          <td>{{ gp_user.designation }}</td>
+                          <td>{% if utr_or_id.paymentID == '0' %}
+                                {{ utr_or_id.UTR_no }}
+                              {% else %}
+                                {{ utr_or_id.paymentID }}
+                              {% endif %}
+                          </td>
+                          <td>{{ phase_for_paid_user.phaseNO }}</td>
+                          <td>{{ unmatched_and_exlude.remark }}</td>
+                        </tr>
+                      {% endif %}
+                        {% endfor %}
+                    {% endfor %}
+                  {% endfor %}
+                {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+    <!-- Button trigger modal -->
+
+
+<!-- Modal -->
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <table class="table">
+  <thead>
+    <tr>
+      <th scope="col">District</th>
+      <th scope="col">Taluka</th>
+      <th scope="col">Grampanchayat</th>
+      <th scope="col">Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+    <tr>
+      <th scope="row">Nagpur</th>
+      <td>Hingna</td>
+      <td>Hingna</td>
+      <td>Gram Sevak</td>
+    </tr>
+  </tbody>
+</table>
+      </div>
+      <div class="modal-footer">
+        <a href="{% static '/img/pr.pdf' %}" class="btn btn-primary">Confirm</a>
+      </div>
+    </div>
+  </div>
+</div>
+              {% endblock %}
+                  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js" integrity="sha512-bLT0Qm9VnAYZDflyKcBaQ2gg0hSYNQrJ8RilYldYQ1FxQYoCLtUjuuRuZo+fjqhx/qtq/1itJ0C2ejDxltZVFg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/bootstrap-table@1.18.1/dist/bootstrap-table.min.js"></script>
+    {% comment %} <script>
+    $('#table').bootstrapTable({
+      pagination: true,
+      sorting:true,
+  search: true,
+  columns: [{
+    field: 'id',
+    title: 'Item ID'
+  }, {
+    field: 'name',
+    title: 'Item Name'
+  }, {
+    field: 'price',
+    title: 'Item Price'
+  }],
+  data: [{
+    id: 1,
+    name: 'Item 1',
+    price: '$1'
+  }, {
+    id: 2,
+    name: 'Item 2',
+    price: '$2'
+  }]
+})
+    </script> {% endcomment %}
+  </body>
+</html>

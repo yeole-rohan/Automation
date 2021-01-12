@@ -1,0 +1,4 @@
+<option value="">Select Your Grampanchayat</option>
+{% for panchayat in panchayats %}
+    <option value="{{ panchayat.id }}">{{ panchayat.panchayat }}</option>
+{% endfor %}

@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    {% load static %}
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- External CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+    <title>Government of Maharashtra | Dashboard</title>
+  </head>
+  <body>
+    <header>
+        <div class="container">
+            <h1>
+                <a href="{% url 'portal:home' %}">
+                    <img class="img-fluid" src="{% static 'img/logo.png' %}" alt="head-logo">
+                </a>
+            </h1>
+            <p class="head">Government of Maharashtra</p>
+            {% if request.user.is_authenticated %}
+              <div class="name-log">
+                <p class="user-name">MR. {{ request.user }}</p>
+                <a href="{% url 'logout' %}">Logout</a>
+              </div>
+            {% endif %}
+        </div>
+    </header>
+    {% block content %}
+    <div class="container">
+        <div class="outer">
+            <h3 class="selection">Select</h3>
+            <div class="agency-selection home"> 
+                <ul class="ul">
+                {% if request.user.is_gp %}
+                  {% if agency %}
+                    {% for age in agency %}
+                      {% if age.choose_goverment %}
+                        <li class="lists">
+                            <a>
+                              <h5>Government Agency <small>Choosed</small></h5>
+                              <p class="pos-rel">You have selected to go with govement agency</p>
+                              <a class="lins" href="{% url 'portal:payments' %}">go to the payment</a>
+                            </a>
+                        </li>
+                      {% elif age.choose_local %}
+                          <li class="lists">
+                              <a>
+                                <h5>Private Agency <small>Choosed</small></h5>
+                                <p class="pos-rel">Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                              </a>
+                          </li>
+                      {% endif %}
+                    {% endfor %}
+                    {% else %}
+                      <li class="lists">
+                            <a data-toggle="modal" data-target="#gov_agency">
+                                <h5>Government Selected Agency</h5>
+                                <p class="pos-rel">if selected, you have to go with government selected agencies, once confirmed, selection can’t be undone. </p>
+                            </a>
+                        </li>
+                        <li class="lists">
+                              <a data-toggle="modal" data-target="#local_agency">
+                                  <h5>Other Agency</h5>
+                                  <p class="pos-rel">if selected, you are choosing to go with local or public training agencies.</p>
+                              </a>
+                          </li>
+                  {% endif %}
+                {% endif %}
+                {% if request.user.is_accountant %}
+                    <li class="lists">
+                      <a>
+                          <h5>Accountant</h5>
+                          <a class="lins" href="{% url 'portal:accountant_list' %}">Go to Payment Section</a>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if request.user.is_observar %}
+                    <li class="lists">
+                      <a data-toggle="modal" data-target="#gov_agency">
+                          <h5>RTD (observar)</h5>
+                          <a class="lins" href="{% url 'portal:observar' %}">go to Dashboard</a>
+                      </a>
+                    </li>
+                  {% endif %}
+                  {% if request.user.is_director %}
+                    <li class="lists">
+                      <a data-toggle="modal" data-target="#gov_agency">
+                          <h5>Director</h5>
+                          <a class="lins" href="{% url 'portal:director' %}">go to Dashboard</a>
+                      </a>
+                    </li>
+                  {% endif %}
+                </ul>
+            </div>
+
+        </div>
+    </div>
+    {% endblock content %}
+<!-- Modal -->
+<div class="modal fade" id="gov_agency" tabindex="-1" role="dialog" aria-labelledby="gov_agencyLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="gov_agencyLabel">You Selected</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Government Agency</h4>
+        <div class="des pos-rel">
+            you going with government selected agencies, once confirmed, selection can’t be undone. 
+        </div>
+      </div>
+      <div class="modal-footer">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="choose">
+            {{ gov_form.choose_goverment }}
+            <span>{{ gov_form.choose_goverment.label }}</span>
+          </div>
+          <button type="submit" name="goverment" id="goverment"class="btn btn-primary">Confirm</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal -->
+<div class="modal fade" id="local_agency" tabindex="-1" role="dialog" aria-labelledby="local_agencyLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="local_agencyLabel">You Selected</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <h4>Private Agency</h4>
+        <div class="des pos-rel">
+            you going with local agencies, once confirmed, selection can’t be undone. 
+        </div>
+      </div>
+      <div class="modal-footer">
+      <form method="POST">
+          {% csrf_token %}
+          <div class="choose">
+            {{ pub_form.choose_local }}
+            <span>{{ pub_form.choose_local.label }}</span>
+          </div>
+          <button type="submit" name="public" id="public" class="btn btn-primary">Confirm</button>
+        </form>
+          </div>
+    </div>
+  </div>
+</div>
+
+
+
+    <!-- External js -->
+    <script type="text/javascript" src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'js/main.js' %}"></script>
+  </body>
+</html>

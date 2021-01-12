@@ -1,0 +1,4 @@
+<option value="">Select Your Taluka</option>
+{% for taluka in talukas %}
+    <option value="{{ taluka.id }}">{{ taluka.taluka }}</option>
+{% endfor %}
