@@ -151,10 +151,11 @@
                           <td><a href="{% static '/img/pr.pdf' %}" class="btn btn-primary">Approve</a></td>
                         </tr>
                       {% endif %}
-                        {% endfor %}
+                      {% endfor %}
                     {% endfor %}
                   {% endfor %}
                 {% endfor %}
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>approved</td><td>matched</td><td><a href="#">Approve</a></td></tr>
                 </tbody>
               </table>
             </div>
@@ -204,6 +205,25 @@
                     {% endfor %}
                   {% endfor %}
                 {% endfor %}
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="#">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="#">action</a></td></tr><tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="#">action</a></td></tr><tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>3</td><td>not matched</td><td><a href="#">action</a></td></tr><tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>4</td><td>not matched</td><td><a href="#">action</a></td></tr><tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="#">action</a></td></tr>
+                    {% comment %} <tr>
+                      <td>{{ gp_user.district }}</td>
+                      <td>{{ gp_user.taluka }}</td>
+                      <td>{{ gp_user.panchayat }}</td>
+                      <td>{{ gp_user.first_name }} {{ gp_user.last_name }}</td>
+                      <td>{{ gp_user.phone_number }}</td>
+                      <td>{{ gp_user.designation }}</td>
+                      <td>{% if utr_or_id.paymentID == '0' %}
+                            {{ utr_or_id.UTR_no }}
+                          {% else %}
+                            {{ utr_or_id.paymentID }}
+                          {% endif %}
+                      </td>
+                      <td>{{ phase_for_paid_user.phaseNO }}</td>
+                      <td>{{ unmatched_pay.remark }}</td>
+                      <td><a href="{% url 'portal:action' unmatched_pay.gp_user.user_id %}">action</a></td>
+                    </tr> {% endcomment %}
                 </tbody>
               </table>
             </div>

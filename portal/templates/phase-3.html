@@ -32,8 +32,7 @@
     <div class="container">
         <div class="outer payments-div">
             <h3 class="selection">Third Phase</h3>
-               <div class="row">
-                {% if audit_form.errors %}
+            {% if audit_form.errors %}
                     {% for field in audit_form %}
                         {% for error in field.errors %}
                             <div class="alert alert-danger">
@@ -48,6 +47,8 @@
                     {% endfor %}
                 {% endif %}
                 
+               <div class="row">
+                
                 <div class="col-md-8">
                     <div class="info">
                         <small>Step three</small>
@@ -56,7 +57,6 @@
                     </div>
                 </div>
                 <div class="col-md-4">
-                   
                     <div class="">
                         <small>Maximum file size: 20MB, only pdf is allowed</small>
                         <form method="POST" class="pos-rel" enctype='multipart/form-data'>
@@ -65,10 +65,6 @@
                             <button name="audit_id" id="audit_id" class="pay" type="submit">Submit</button>
                         </form>
                     </div>
-                
-                <div class="yes-div">
-                    <img class="img-fluid" src="{% static '/img/green_circle_tick.png' %}">
-                </div>
                 </div>
             </div>
         </div>
