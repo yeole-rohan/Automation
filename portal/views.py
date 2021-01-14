@@ -228,20 +228,21 @@ def accountant_list(request):
 @login_required
 def action(request, user_id):
     get_user_pay_obj = Payment.objects.filter(user = user_id)
+    get_user_from_account = ''
     try:
         get_user_from_account = AccountantApprovel.objects.get(gp_user = user_id)
     except:
         pass
-    approve_form = AccountantApprovelForm(instance=get_user_from_account)
+    approve_form = AccountantApprovelForm()
     if request.method == 'POST': 
         approve_form = AccountantApprovelForm(request.POST or None)
-        if approve_form.is_valid():
-            approve_form = approve_form.save(commit=False)
-            user = Grampanchayat.objects.get(user=user_id)
-            approve_form.gp_user = Grampanchayat.objects.get(user=user_id)
-            approve_form.user = Accountant.objects.get(user=request.user.id)
-            approve_form.save()
-            return redirect('portal:accountant_list')
+        # if approve_form.is_valid():
+        #     approve_form = approve_form.save(commit=False)
+        #     user = Grampanchayat.objects.get(user=user_id)
+        #     approve_form.gp_user = Grampanchayat.objects.get(user=user_id)
+        #     approve_form.user = Accountant.objects.get(user=request.user.id)
+        #     approve_form.save()
+        return redirect('portal:accountant_list')
     return render(request, template_name="action.html", context={'payment' : get_user_pay_obj,'approve_form' : approve_form,})
 
 

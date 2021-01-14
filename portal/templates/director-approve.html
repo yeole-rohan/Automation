@@ -44,9 +44,43 @@
             <li class="nav-item">
               <a class="nav-link " id="pills-matched-tab" data-toggle="pill" href="#pills-matched" role="tab" aria-controls="pills-matched" aria-selected="true">Approved</a>
             </li>
+            {% comment %} Phase {% endcomment %}
+            <li class="nav-item">
+              <a class="nav-link " id="pills-phase-tab" data-toggle="pill" href="#pills-phase" role="tab" aria-controls="pills-phase" aria-selected="true">Phase</a>
+            </li>
           </ul>
           <div class="tab-content" id="pills-tabContent">
 
+            {% comment %} phase {% endcomment %}
+            <div class="tab-pane fade  " id="pills-phase" role="tabpanel" aria-labelledby="pills-phase-tab">
+              <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
+                <thead>
+                  <tr>
+                    <th scope="col">Date</th>
+                      <th scope="col">UTR/PaymentID</th>
+                      <th scope="col">Grampanchayat</th>
+                      <th scope="col">Phase</th>
+                      <th scope="col">Accountant Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                  <td>12/Jan/2020</td>
+                
+                  <td>
+                    order_GJJd7iC8RCV888
+                  </td>
+                   <td>bhandara</td>
+                  <td><p>phase 1 complete</p>
+                  <p>phase 2 complete</p>
+                   <p>phase 3 Pending</p>
+                    <p>phase 2 Pending</p></td>
+                  <td><p>Phase 1 paid</p>
+                  <p>Phase 2 paid</p></td></tr>
+                          
+                </tbody>
+              </table>
+            </div>
             {% comment %} Matched {% endcomment %}
             <div class="tab-pane fade  " id="pills-matched" role="tabpanel" aria-labelledby="pills-matched-tab">
               <table data-toggle="table" data-sorting="true" data-pagination="true" data-search="true">
@@ -60,7 +94,6 @@
                       <th scope="col">Designation</th>
                       <th scope="col">UTR/PaymentID</th>
                       <th scope="col">Phase</th>
-                      <th scope="col">Remark</th>
                       <th scope="col">Status</th>
                   </tr>
                 </thead>
@@ -92,6 +125,39 @@
                     {% endfor %}
                   {% endfor %}
                 {% endfor %}
+                <tr>
+                  <td>bhandara</td>
+                  <td>bhandardara</td>
+                  <td>dara</td>
+                  <td>rohan mohite</td>
+                  <td>1234567890</td>
+                  <td>gram_sevak</td>
+                  <td>order_GJJd7iC8RCV888</td>
+                  <td>Phase 1 Approved</td>
+                  <td>Approved by Director</td>
+                </tr>
+                <tr>
+                  <td>bhandara</td>
+                  <td>bhandardara</td>
+                  <td>dara</td>
+                  <td>rohan mohite</td>
+                  <td>1234567890</td>
+                  <td>gram_sevak</td>
+                  <td>order_GJJd7iC8RCV888</td>
+                  <td>Phase 1 Approved</td>
+                  <td>Approved by Director</td>
+                </tr>
+                <tr>
+                  <td>bhandara</td>
+                  <td>bhandardara</td>
+                  <td>dara</td>
+                  <td>rohan mohite</td>
+                  <td>1234567890</td>
+                  <td>gram_sevak</td>
+                  <td>order_GJJd7iC8RCV888</td>
+                  <td>Phase 1 Approved</td>
+                  <td>Approved by Director</td>
+                </tr>
                 </tbody>
               </table>
             </div>
