@@ -41,9 +41,44 @@
                       {% if age.choose_goverment %}
                         <li class="lists">
                             <a>
+                            {{account_approve}}
                               <h5>Government Agency <small>Choosed</small></h5>
                               <p class="pos-rel">You have selected to go with govement agency</p>
-                              <a class="lins" href="{% url 'portal:payments' %}">go to the payment</a>
+                              {% if pay %}
+                                <p class="lins">Payment Phase is completed</p>
+                                
+                                  <span class="mismatched">UTR number missmatched, please check the UTR and submit again.</span>
+                                   {% comment %} <a class="lins" href="{% url 'portal:payments' %}">go to the payment</a> {% endcomment %}
+                                   
+                                   {% if not trainning %}
+                                  <a class="lins" href="{% url 'portal:two' %}">go to the Trainning Section</a>
+                               
+                                {% endif %}
+                                
+                              {% else %}
+                                <a class="lins" href="{% url 'portal:payments' %}">go to the payment</a>
+                              {% endif %}
+                              {% if trainning %}
+                                <p class="lins">Training Phase is completed</p>
+                                {% if not audit_pdf %}<a class="lins" href="{% url 'portal:three' %}">go to the Audit Section</a>
+                                {% endif %}
+                                
+                              {% else %}
+                                {% comment %} <a class="lins" href="{% url 'portal:two' %}">go to the Trainning Section</a> {% endcomment %}
+                              {% endif %}
+                              {% if audit_pdf %}
+                                <p class="lins">Audit Phase is completed</p>
+                                {% if not cert %}<a class="lins" href="{% url 'portal:four' %}">go to the Certification Section</a>
+                                {% endif %}
+                                
+                            
+                                {% comment %} <a class="lins" href="{% url 'portal:three' %}">go to the Audit Section</a> {% endcomment %}
+                             {% endif %}
+                              {% if cert %}
+                                <p class="lins">Certification Phase is completed</p>
+                              {% else %}
+                                {% comment %} <a class="lins" href="{% url 'portal:four' %}">go to the Certification Section</a> {% endcomment %}
+                              {% endif %}
                             </a>
                         </li>
                       {% elif age.choose_local %}

@@ -1,16 +1,17 @@
 from django.shortcuts import render, redirect, get_object_or_404
 
-from .forms import GPSignUPForm, GovermentForm, PublicForm, PaymentForm, AuditDocumentForm, CertificateForm, AccountantApprovelForm, DirectorApprovelForm, AccountantSignUpForm, DirectorSignUpForm, ObservarSignUpForm
+from .forms import GPSignUPForm, GovermentForm, PublicForm, PaymentForm, AuditDocumentForm, CertificateForm, AccountantApprovelForm, DirectorApprovelForm, AccountantSignUpForm, DirectorSignUpForm, ObservarSignUpForm, TrainningForm
 
 from django.views.generic import CreateView
-from .models import User, District, Taluka, Panchayat, Agency, Payment, AuditDocument, Certificate, AccountantApprovel, DirectorApprovel, Grampanchayat, Phase, Accountant
+from .models import User, District, Taluka, Panchayat, Agency, Payment, AuditDocument, Certificate, AccountantApprovel, DirectorApprovel, Grampanchayat, Phase, Accountant, Trainning
 import razorpay
 from django.urls import reverse_lazy
 from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.decorators import login_required
-
+from automation import settings
+ 
 '''Renders Logins View For Diffrent Users, Window to House'''
 '''Grampachayat = gp, '''
 '''Deafult Login View'''
@@ -52,6 +53,15 @@ def home(request):
     agency = Agency.objects.filter(user = request.user)
     gov_choose = GovermentForm()
     pub_form = PublicForm()
+    trainning, pay, audit_pdf, cert, account_approve = '', '', '', '', ''
+    try:
+        pay = Payment.objects.get(user=Grampanchayat.objects.get(user = request.user.id))
+        audit_pdf = AuditDocument.objects.filter(user=request.user.id)
+        cert = Certificate.objects.filter(user=request.user.id)
+        trainning = Trainning.objects.get(user=Grampanchayat.objects.get(user = request.user.id))
+        account_approve = AccountantApprovel.objects.filter(gp_user=Grampanchayat.objects.get(user = request.user.id)).exclude(remark__contains="paid")
+    except:
+        pass
     if request.method == "POST" and "goverment" in request.POST:
         gov_choose = GovermentForm(request.POST or None)
         if gov_choose.is_valid():
@@ -69,7 +79,7 @@ def home(request):
             pub_form.choose_goverment = "False"
             pub_form.save()
             return redirect('portal:home')
-    return render(request, template_name="home.html", context={ 'gov_form' : gov_choose, 'pub_form' : pub_form, 'agency' : agency})
+    return render(request, template_name="home.html", context={ 'gov_form' : gov_choose, 'pub_form' : pub_form, 'agency' : agency, 'pay' : pay, 'trainning' : trainning, 'audit_pdf' : audit_pdf, 'cert' : cert, 'account_approve' : account_approve})
 
 '''Ajax calling views for dropdown from grampanchayat register view'''
 def load_taluka(request):
@@ -128,11 +138,11 @@ def payments(request):
         else:
             pay = Payment.objects.create(user=Grampanchayat.objects.get(user = request.user.id), paymentID=order_id, UTR_no=0, amount=38940,modeOFPay = "Internet Banking")
             pay.save()
-            phase = Phase.objects.create(user=Grampanchayat.objects.get(user = request.user.id), phaseNO=1)
-            phase.save()
+            # phase = Phase.objects.create(user=Grampanchayat.objects.get(user = request.user.id), phaseNO=1)
+            # phase.save()
             create_aprrove_pending = AccountantApprovel.objects.create(gp_user=Grampanchayat.objects.get(user = request.user.id), account_status='unmatched', remark='paid')
             create_aprrove_pending.save()
-            return redirect('portal:payments')
+            return redirect('portal:home')
     try:
         pays = get_object_or_404(Payment, user_id = request.user)
         if pays:
@@ -156,11 +166,11 @@ def payments(request):
             pay_form.modeOFPay = "RTGS"
             pay_form.paymentID = 0
             pay_form.save()
-            phase = Phase.objects.create(user=Grampanchayat.objects.get(user = request.user.id), phaseNO=1)
-            phase.save()
+            # phase = Phase.objects.create(user=Grampanchayat.objects.get(user = request.user.id), phaseNO=1)
+            # phase.save()
             create_aprrove_pending = AccountantApprovel.objects.create(gp_user=Grampanchayat.objects.get(user = request.user.id), account_status='unmatched', remark='paid')
             create_aprrove_pending.save()
-            return redirect('portal:payments')
+            return redirect('portal:home')
     
 
     if request.method == "POST" and 'cert' in request.POST:
@@ -211,7 +221,8 @@ def accountant_list(request):
     get_phase_for_paid_user = Phase.objects.all()
     approved_payments_matched = AccountantApprovel.objects.filter(account_status__iexact='matched')
     get_unmatched_and_exlude_paid = AccountantApprovel.objects.exclude(remark__contains ='paid')
-    return render(request, template_name='all-payments.html', context={'all_gp_users' : get_all_gp_users_objects,  'all_utr_or_id' : get_all_id_or_utr_no, 'filtered_approved_payments' : get_approved_payments, 'phase_for_paid_users' : get_phase_for_paid_user, 'approved_payments_matched' : approved_payments_matched, 'get_unmatched_and_exlude_paid' : get_unmatched_and_exlude_paid})
+    trainning_user = Trainning.objects.filter(trainning_completed=True)
+    return render(request, template_name='all-payments.html', context={'all_gp_users' : get_all_gp_users_objects,  'all_utr_or_id' : get_all_id_or_utr_no, 'filtered_approved_payments' : get_approved_payments, 'phase_for_paid_users' : get_phase_for_paid_user, 'approved_payments_matched' : approved_payments_matched, 'get_unmatched_and_exlude_paid' : get_unmatched_and_exlude_paid, 'trainning_users' : trainning_user})
 
 '''Accontant approverl view, here accountant will match or unmathced payment by verifing paymentID or UTR No'''
 @login_required
@@ -265,15 +276,55 @@ def director_action(request, user_id):
     # static views
 
 def phase_two(request):
-    return render(request, template_name="phase-2.html", context={})
+    training = TrainningForm()
+    if request.method == "POST":
+        training = TrainningForm(request.POST or None)
+        if training.is_valid():
+            training = training.save(commit=False)
+            training.user =  Grampanchayat.objects.get(user_id=request.user.id)
+            training.save()
+            return redirect('portal:home')
+    return render(request, template_name="phase-2.html", context={'training' : training})
 
     
 def phase_three(request):
-    audit_form = AuditDocumentForm()
+    audit_form = AuditDocumentForm(request.POST or None, request.FILES)
+    if audit_form.is_valid():
+        files = audit_form.cleaned_data['pre_audit']
+        content_type = files.content_type.split('/')[1]
+        print(files)
+        print(files.size)
+        print(files.content_type)
+        print(files.content_type.split())
+        if content_type in settings.CONTENT_TYPES:
+            if files.size > int(settings.MAX_UPLOAD_SIZE):
+                messages.error(request, "Please keep filesize under {}. Current filesize {}".format(filesizeformat(settings.MAX_UPLOAD_SIZE), filesizeformat(files.size)))
+            else:
+                audit_form = audit_form.save(commit=False)
+                user=Grampanchayat.objects.get(user = request.user.id)
+                audit_form.user = user
+                audit_form.save()
+        else:
+            messages.error(request, "File is not supported")
+        return redirect('portal:home')
     return render(request, template_name="phase-3.html", context={'audit_form':audit_form})
 
 def phase_four(request): 
-    cert_form = CertificateForm()
+    cert_form = CertificateForm(request.POST or None, request.FILES)
+    if cert_form.is_valid():
+        image = cert_form.cleaned_data['certificate']
+        content_type = image.content_type.split('/')[1]
+        if content_type in settings.CONTENT_TYPES_IMG:
+            if image.size > int(settings.MAX_UPLOAD_SIZE_IMG):
+                messages.error(request, "Please keep filesize under {}. Current filesize {}".format(filesizeformat(settings.MAX_UPLOAD_SIZE_IMG), filesizeformat(image.size)))
+            else:
+                cert_form = cert_form.save(commit=False)
+                user=Grampanchayat.objects.get(user = request.user.id)
+                cert_form.user = user
+                cert_form.save()
+        else:
+            messages.error(request, "File is not supported")
+        return redirect('portal:home')
     return render(request, template_name="phase-4.html", context={'cert_form':cert_form})
 
 def servilance(request):

@@ -151,7 +151,7 @@ class Phase(models.Model):
 class AccountantApprovel(models.Model):
     gp_user = models.OneToOneField("Grampanchayat", primary_key=True, verbose_name="Grampanchayat User", on_delete=models.CASCADE)
     account_status = models.CharField(choices=PAYMENT_STATUS, max_length=1000)
-    remark = models.CharField(max_length=50, default="paid")
+    remark = models.CharField(max_length=50, default="paid", blank=False)
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -170,15 +170,14 @@ class DirectorApprovel(models.Model):
 
 class Trainning(models.Model):
     user = models.OneToOneField("Grampanchayat", primary_key=True, verbose_name="gp_trainning", on_delete=models.CASCADE) 
-    tranning = models.CharField(choices=DIRECTOR_APPROVEL, max_length=1000)
-    place = models.TextField()
-    date = models.DateTimeField(auto_now=False)
+    trainning_completed= models.BooleanField(default=False, verbose_name="I have completed the trainning and essentials.")
+    date = models.DateTimeField(auto_now=True)
     class Meta:
         verbose_name = "Trainning"
         verbose_name_plural = "Trainnings"
 
     def __str__(self):
-        return self.name
+        return str(self.user_id)
 
 class AuditDocument(models.Model):
     user = models.OneToOneField("Grampanchayat", primary_key=True, verbose_name="gp_audit_doc", on_delete=models.CASCADE) 

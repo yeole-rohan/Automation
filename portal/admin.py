@@ -55,7 +55,7 @@ class DirectorApprovelAdmin(admin.ModelAdmin):
 
 @admin.register(Trainning)
 class TrainningAdmin(admin.ModelAdmin):
-    list_display = ('user', 'date', 'tranning', 'place')
+    list_display = ('user', 'date', 'trainning_completed')
 
 @admin.register(AuditDocument)
 class AuditDocumentAdmin(admin.ModelAdmin):

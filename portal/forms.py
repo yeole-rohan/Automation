@@ -1,6 +1,6 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
-from .models import User, Grampanchayat, District, Taluka, Panchayat, Agency, Payment, AuditDocument, Certificate, AccountantApprovel, DirectorApprovel, Accountant, Director, Observar
+from .models import User, Grampanchayat, District, Taluka, Panchayat, Agency, Payment, AuditDocument, Certificate, AccountantApprovel, DirectorApprovel, Accountant, Director, Observar, Trainning
 from django.db import transaction
 from django.core.validators import RegexValidator, EmailValidator
 
@@ -164,3 +164,8 @@ class DirectorApprovelForm(forms.ModelForm):
     class Meta:
         model = DirectorApprovel
         fields = ("director_status",)
+    
+class TrainningForm(forms.ModelForm):
+    class Meta:
+        model = Trainning
+        fields = ("trainning_completed",)
