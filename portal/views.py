@@ -53,9 +53,11 @@ def home(request):
     agency = Agency.objects.filter(user = request.user)
     gov_choose = GovermentForm()
     pub_form = PublicForm()
-    trainning, pay, audit_pdf, cert, account_approve = '', '', '', '', ''
+    
+    trainning, pay, audit_pdf, cert, account_approve,dir_app = '', '', '', '', '',''
     try:
         pay = Payment.objects.get(user=Grampanchayat.objects.get(user = request.user.id))
+        dir_app = DirectorApprovel.objects.get(gp_user=Grampanchayat.objects.get(user = request.user.id))
         audit_pdf = AuditDocument.objects.filter(user=request.user.id)
         cert = Certificate.objects.filter(user=request.user.id)
         trainning = Trainning.objects.get(user=Grampanchayat.objects.get(user = request.user.id))
@@ -96,7 +98,7 @@ def load_panchayat(request):
 
 '''Grampachayat Payments view and form handling'''
 @login_required
-def payments(request): 
+def payments(request):
     print(request.POST)
     pays = Payment.objects.filter(user=request.user.id)
     audit_pdf = AuditDocument.objects.filter(user=request.user.id)
@@ -228,13 +230,14 @@ def accountant_list(request):
 @login_required
 def action(request, user_id):
     get_user_pay_obj = Payment.objects.filter(user = user_id)
+    
     get_user_from_account = ''
     try:
         get_user_from_account = AccountantApprovel.objects.get(gp_user = user_id)
     except:
         pass
     approve_form = AccountantApprovelForm()
-    if request.method == 'POST': 
+    if request.method == 'POST':
         approve_form = AccountantApprovelForm(request.POST or None)
         # if approve_form.is_valid():
         #     approve_form = approve_form.save(commit=False)
@@ -278,18 +281,71 @@ def director_action(request, user_id):
 
 def phase_two(request):
     training = TrainningForm()
-    if request.method == "POST":
+    print(request.POST)
+    pays = Payment.objects.filter(user=request.user.id)
+    audit_pdf = AuditDocument.objects.filter(user=request.user.id)
+    cert = Certificate.objects.filter(user=request.user.id)
+    approve = '' 
+    # AccountantApprovel.objects.filter(gp_user=request.user.id, account_status__iexact="unmatched")
+    pdf = 'yes' if audit_pdf else 'no'
+    app = 'yes' if approve else 'no'
+    certificate = 'yes' if cert else 'no'
+    if pays:
+        if approve:
+            paid = 'no'
+        else:
+            paid = 'yes'
+    else:
+        paid = 'no'
+
+    order_amount = 3894000 
+    order_currency = 'INR'
+    order_receipt = 'order_rcptid_11'
+    client = razorpay.Client(auth = ('rzp_test_RFsHcz1H7YbOw2', 'LNodPNAN6LQqVk8a898PnJH3'))
+    payment = client.order.create(dict(amount=order_amount, currency=order_currency, receipt=order_receipt, payment_capture='1'))
+    pay_form = PaymentForm()
+    if request.method == "POST" and 'razorpay_order_id' in request.POST:
+        print('from razorpay') 
+        get_post = request.POST
+        order_id = ''
+        params_dict = {}
+        for key, value in get_post.items():
+            if key == "razorpay_order_id":
+                params_dict['razorpay_order_id'] = value
+                order_id = value
+            elif key == "razorpay_payment_id":
+                params_dict['razorpay_payment_id'] = value
+            elif key == "razorpay_signature":
+                params_dict['razorpay_signature'] = value
+        status = client.utility.verify_payment_signature(params_dict)
+        if status:
+            return render(request, 'payment-confirm.html',context= {'status': 'Payment was unsuccesfull!!!'})
+        else:
+            pay = Payment.objects.create(user=Grampanchayat.objects.get(user = request.user.id), paymentID=order_id, UTR_no=0, amount=38940,modeOFPay = "Internet Banking")
+            pay.save()
+            # phase = Phase.objects.create(user=Grampanchayat.objects.get(user = request.user.id), phaseNO=1)
+            # phase.save()
+            create_aprrove_pending = AccountantApprovel.objects.create(gp_user=Grampanchayat.objects.get(user = request.user.id), account_status='unmatched', remark='paid')
+            create_aprrove_pending.save()
+            return redirect('portal:home')
+    if request.method == "POST" and 'trainning' in request.POST: 
         training = TrainningForm(request.POST or None)
         if training.is_valid():
             training = training.save(commit=False)
             training.user =  Grampanchayat.objects.get(user_id=request.user.id)
             training.save()
             return redirect('portal:home')
-    return render(request, template_name="phase-2.html", context={'training' : training})
+    return render(request, template_name="phase-2.html", context={'training' : training,'pay_form':pay_form,'payment' : payment, 'paid':paid, 'app':app, 'pdf':pdf})
 
     
 def phase_three(request):
     audit_form = AuditDocumentForm(request.POST or None, request.FILES)
+    order_amount = 3894000 
+    order_currency = 'INR'
+    order_receipt = 'order_rcptid_11'
+    client = razorpay.Client(auth = ('rzp_test_RFsHcz1H7YbOw2', 'LNodPNAN6LQqVk8a898PnJH3'))
+    payment = client.order.create(dict(amount=order_amount, currency=order_currency, receipt=order_receipt, payment_capture='1'))
+    pay_form = PaymentForm()
     if audit_form.is_valid():
         files = audit_form.cleaned_data['pre_audit']
         content_type = files.content_type.split('/')[1]
@@ -308,10 +364,16 @@ def phase_three(request):
         else:
             messages.error(request, "File is not supported")
         return redirect('portal:home')
-    return render(request, template_name="phase-3.html", context={'audit_form':audit_form})
+    return render(request, template_name="phase-3.html", context={'audit_form':audit_form,'pay_form':pay_form,'payment' : payment})
 
 def phase_four(request): 
     cert_form = CertificateForm(request.POST or None, request.FILES)
+    order_amount = 3894000 
+    order_currency = 'INR'
+    order_receipt = 'order_rcptid_11'
+    client = razorpay.Client(auth = ('rzp_test_RFsHcz1H7YbOw2', 'LNodPNAN6LQqVk8a898PnJH3'))
+    payment = client.order.create(dict(amount=order_amount, currency=order_currency, receipt=order_receipt, payment_capture='1'))
+    pay_form = PaymentForm()
     if cert_form.is_valid():
         image = cert_form.cleaned_data['certificate']
         content_type = image.content_type.split('/')[1]
@@ -326,7 +388,7 @@ def phase_four(request):
         else:
             messages.error(request, "File is not supported")
         return redirect('portal:home')
-    return render(request, template_name="phase-4.html", context={'cert_form':cert_form})
+    return render(request, template_name="phase-4.html", context={'cert_form':cert_form,'pay_form':pay_form,'payment' : payment})
 
 def servilance(request):
     return render(request, template_name="servilance-audit.html", context={})

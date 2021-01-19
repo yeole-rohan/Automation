@@ -241,7 +241,7 @@
                 <td></td>
                 <td></td>
                 <td>Total = 38940.00</td>
-                <td> <button type="button" class="btn btn-primary">Submit</button></td>
+                <td><form method="POST">{% csrf_token %} <button type="submit" class="btn btn-primary">Submit</button></form></td>
                 <td></td>
                 </tr>
                 </tbody>

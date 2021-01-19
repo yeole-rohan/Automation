@@ -41,16 +41,16 @@
                       {% if age.choose_goverment %}
                         <li class="lists">
                             <a>
-                      
+                     
                               <h5>Government Agency <small>Choosed</small></h5>
                               <p class="pos-rel">You have selected to go with govement agency</p>
                               {% if pay %}
                                 <p class="lins">Payment Phase is completed</p>
                                 
-                                  <span class="mismatched">UTR number missmatched, please check the UTR and submit again.</span>
+                                  {% comment %} <span class="mismatched">UTR number missmatched, please check the UTR and submit again.</span> {% endcomment %}
                                    {% comment %} <a class="lins" href="{% url 'portal:payments' %}">go to the payment</a> {% endcomment %}
-                                   
-                                   {% if not trainning %}
+                                  
+                                  {% if not trainning %}
                                   <a class="lins" href="{% url 'portal:two' %}">go to the Trainning Section</a>
                                
                                 {% endif %}

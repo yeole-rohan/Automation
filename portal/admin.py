@@ -51,7 +51,7 @@ class PhaseAdmin(admin.ModelAdmin):
 
 @admin.register(DirectorApprovel)
 class DirectorApprovelAdmin(admin.ModelAdmin):
-    list_display = ('user', 'date', 'director_status', 'gp_user')
+    list_display = ('date', 'director_status')
 
 @admin.register(Trainning)
 class TrainningAdmin(admin.ModelAdmin):

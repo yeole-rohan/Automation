@@ -158,10 +158,11 @@ class AccountantApprovel(models.Model):
         return str(self.account_status)
     
 class DirectorApprovel(models.Model):
-    user = models.OneToOneField("Director", primary_key=True, verbose_name="director_app", on_delete=models.CASCADE)
-    
+    user = models.ForeignKey("Director", verbose_name="Director", on_delete=models.CASCADE,default=11)
+    # user = models.ManyToManyField("Director", verbose_name="director_app",default=17)
     director_status = models.CharField(choices=DIRECTOR_APPROVEL, max_length=1000)
-    gp_user = models.OneToOneField("Grampanchayat", verbose_name="Grampanchayat User", on_delete=models.CASCADE)
+    pay = models.ManyToManyField("Payment", verbose_name="director_app",default=17)
+    gp_user = models.ManyToManyField("Grampanchayat", verbose_name="Grampanchayat User",default=17)
     date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
