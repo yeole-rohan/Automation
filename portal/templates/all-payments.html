@@ -209,7 +209,7 @@
                   </tr>
                 </thead>
                 <tbody>
-                {% for unmatched_pay in filtered_approved_payments %}
+                {% comment %} {% for unmatched_pay in filtered_approved_payments %} {% endcomment %}
                   {% for gp_user in all_gp_users %}
                     {% for utr_or_id in all_utr_or_id %}
                      {% for phase_for_paid_user in phase_for_paid_users %}
@@ -235,13 +235,13 @@
                         {% endfor %}
                     {% endfor %}
                   {% endfor %}
-                {% endfor %}
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>3</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>4</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
-                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 1 %}">action</a></td></tr>
+                {% comment %} {% endfor %} {% endcomment %}
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>3</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>4</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
+                <tr><td>bhandara</td><td>bhandardara</td><td>dara</td><td>rohan mohite</td><td>1234567890</td><td>gram_sevak</td><td>order_GJJd7iC8RCV888</td><td>2</td><td>not matched</td><td><a href="{% url 'portal:action' 17 %}">action</a></td></tr>
                     {% comment %} <tr>
                       <td>{{ gp_user.district }}</td>
                       <td>{{ gp_user.taluka }}</td>
